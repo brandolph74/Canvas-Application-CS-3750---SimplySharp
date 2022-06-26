@@ -1,0 +1,111 @@
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+
+
+@{
+    var loggedUser = (await UserManager.GetUserAsync(User));
+    string[] noti = (string[])TempData["notification"];
+    TempData.Keep("notification");
+}
+
+<ul class="navbar-nav mr-auto">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-dark" asp-controller="Home" asp-action="Index">Dashboard</a>
+        </li>
+
+        @if (((await UserManager.GetUserAsync(User)).UserType == "T"))
+        {
+            <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="Classes" asp-action="Index">Courses</a>
+            </li>
+        }
+        @if (((await UserManager.GetUserAsync(User)).UserType == "S"))
+        {
+            <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="ClassRegistration" asp-action="Index">Register</a>
+            </li>
+
+            <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="Payment" asp-area="" asp-action="Index">Tuition</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-controller="Calendar" asp-action="Calendar">Calendar</a>
+        </li>
+        @*        <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="Statistics" asp-action="Index">Statistics</a>
+            </li>*@
+    }
+</ul>
+<ul class="navbar-nav ml-auto" >
+    @if (SignInManager.IsSignedIn(User))
+    {
+    <li class="nav-item">
+        <div class="dropdown">
+            @if (noti != null)
+            {
+                <button id="btnNoti" class="btn" data-toggle="dropdown" style="border:none; content:none;">
+                    <i class="fas fa-bell" style="color:dodgerblue"></i>
+                </button>
+            }
+            else
+            {
+                <button id="btnNoti" class="btn" data-toggle="dropdown" style="border:none; content:none;">
+                    <i class="fas fa-bell"></i>
+                </button>
+            }
+
+            <ul class="dropdown-menu" style="width:250px;">
+                <li class="dropdown-header">Recent Notifications:</li>
+                @if (noti != null)
+                {
+                    foreach (var item in noti)
+                    {
+                        <li style="border:groove">@item</li>
+                    }
+                }
+            </ul>
+        </div>
+    </li>
+
+    <li class="nav-item" style="align-self: center;">
+        @*Put a the user's profile image next to their name in tool bar*@
+        @if (UserManager.GetUserAsync(User).Result.ProfilePicture != null)
+        {
+            <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(UserManager.GetUserAsync(User).Result.ProfilePicture))">
+        }
+        else
+        {
+            <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="~/StaticImages/default_profile_image.png">
+        }
+    </li>
+    <li class="nav-item">
+        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello, @loggedUser.FirstName @loggedUser.LastName</a>
+    </li>
+
+
+
+    <li class="nav-item">
+        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+
+    }
+
+
+</ul>
+
+
+
+
+
+
+@*Will use in future if notifications need to become fully live*@
+@*<script src="~/js/Notification.js"></script>*@
+

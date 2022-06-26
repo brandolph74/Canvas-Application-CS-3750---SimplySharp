@@ -1,0 +1,86 @@
+﻿@model IEnumerable<SimplySharp.Models.Class>
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+@{
+    var instructor = (await UserManager.GetUserAsync(User)).FirstName + ' ' + (await UserManager.GetUserAsync(User)).LastName;
+}
+
+@{
+    ViewData["Title"] = "Index";   
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h1 class="text-primary"> Class List</h1>
+        </div>
+    </div>
+    <br />
+
+    @*If the user is teaching greater than zero classes*@
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ClassId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Instructor)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Credits)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Capacity)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Location)
+                    </th>
+                    <th>Meeting Times</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@item.ClassId</td>
+                    <td>@item.ClassName</td>
+                    <td>@item.Instructor</td>
+                    <td>@item.Credits</td>
+                    <td>@item.Capacity</td>
+                    <td>@item.Location</td>
+                    <td>@item.MeetingDays @Html.DisplayFor(modelItem => item.StartTime) - @Html.DisplayFor(modelItem => item.EndTime)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-primary">Delete</a>
+                    </td>
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>You are not registered to teach any classes.</p>
+    }
+    <div class="col-6">
+        <a style="font-weight:500" class="btn btn-success w-18" asp-action="Create">
+            <i class="fas fa-plus"></i> &nbsp; Add New Class
+        </a>
+    </div>
+</div>
+
+

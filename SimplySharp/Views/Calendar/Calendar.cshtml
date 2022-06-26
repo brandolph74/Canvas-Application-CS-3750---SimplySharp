@@ -1,0 +1,56 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<SimplySharp.Models.Event>
+
+@{
+    ViewData["Title"] = "Calendar";
+    var events = (IEnumerable<SimplySharp.Models.Event>)ViewData["events"];
+    var length = events.Count();
+
+    var assgnEvents = (IEnumerable<SimplySharp.Models.AssignmentEvent>)ViewData["assgnEvents"];
+    var aEventsLength = 0;
+    
+    @*If the user is an instructor, assgnEvents will be null. Used this condition to avoid exception.*@
+    @if (assgnEvents != null)
+    {
+        aEventsLength = assgnEvents.Count();
+    }
+
+}
+
+<h1  style="color:dodgerblue">Classes Calendar</h1>
+
+<div id="calendar"></div>
+
+<table id="eventsTable">
+    @for (int i = 0; i < length; i++)
+    {
+        <tr>
+            <td>@events.ElementAt(i).ClassId </td>
+            <td>@events.ElementAt(i).Title </td>
+            <td>@events.ElementAt(i).StartDate </td>
+            <td>@events.ElementAt(i).EndDate </td>
+            <td>@events.ElementAt(i).CourseColor </td>
+        </tr>
+    }
+</table>
+
+@*A table to hold assignment events. Events are extracted and added to calendar in Calendar.js.*@
+<table id="assgnEventsTable">
+    @for (int i = 0; i < aEventsLength; i++)
+    {
+        <tr>
+            <td>@assgnEvents.ElementAt(i).Id</td>
+            <td>@assgnEvents.ElementAt(i).CourseName</td>
+            <td>@assgnEvents.ElementAt(i).AssignmentTitle</td>
+            <td>@assgnEvents.ElementAt(i).DueDate</td>
+            <td>@assgnEvents.ElementAt(i).DueDateOffset</td>
+        </tr>
+    }
+</table>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
+<script src="~/js/Calendar.js"></script>

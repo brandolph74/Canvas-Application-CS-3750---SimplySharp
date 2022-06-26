@@ -1,0 +1,231 @@
+@model SimplySharp.Models.Assignment
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+}
+@{
+    var classid = @TempData["classid"];
+    var userid = (await UserManager.GetUserAsync(User)).Id;
+    DateTime time = DateTime.Now;
+    string message = "";
+    var score = TempData["UserScore"];
+    string priorText = (string)TempData["UserText"];
+    DateTime dueDate = (DateTime)TempData["DueDate"];
+    string priorFiles = (string)TempData["UserFiles"];
+    var studentScore = TempData["StudentScore"];
+
+    int[] scoreList = (int[])TempData["ScoreList"];
+    var scoreCount = TempData["ScoreListLength"];
+    var maxPoints = TempData["MaxPoints"];
+
+
+
+
+}
+@if (((await UserManager.GetUserAsync(User)).UserType == "S"))
+{
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        //SOURCE: https://developers.google.com/chart/interactive/docs/quick_start
+        // Load the Visualization API and the corechart package.
+        var count = @scoreCount;
+        var max = @maxPoints;
+        var studentScore = @studentScore;
+        google.charts.load('current', { 'packages': ['corechart'] });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+
+
+            var jsScoreList = new Array();
+
+            @if(scoreList is not null)
+            {
+                 @foreach (var num in scoreList)
+                  {
+                     @:jsScoreList.push(@num);
+                  }
+            }
+
+
+
+            let numAs = 0;
+            let numBs = 0;
+            let numCs = 0;
+            let numDs = 0;
+            let numFs = 0;
+            let letterGrade = 0;
+            let colorA = '';
+            let colorB = '';
+            let colorC = '';
+            let colorD = '';
+            let colorF = '';
+
+            for (let i = 0; i < count; i++) {
+                let letterGrade = jsScoreList[i] / max * 100;
+                if (letterGrade < 60) {
+                    numFs++;
+                } else if (letterGrade >= 60 && letterGrade < 70) {
+                    numDs++;
+                } else if (letterGrade >= 70 && letterGrade < 80) {
+                    numCs++;
+                } else if (letterGrade >= 80 && letterGrade < 90) {
+                    numBs++;
+                } else if (letterGrade >= 90) {
+                    numAs++;
+                }
+            }
+            let studentLetterGrade = studentScore / max * 100;
+            if (studentLetterGrade < 60) {
+                colorF = 'green';
+            } else if (studentLetterGrade >= 60 && studentLetterGrade < 70) {
+                colorD = 'green';
+            } else if (studentLetterGrade >= 70 && studentLetterGrade < 80) {
+                colorC = 'green';
+            } else if (studentLetterGrade >= 80 && studentLetterGrade < 90) {
+                colorB = 'green';
+            } else if (studentLetterGrade >= 90) {
+                colorA = 'green';
+            }
+            // Create the data table.
+            var data = new google.visualization.arrayToDataTable([
+                ['Letter Grade', 'Number of Students', { role: 'style'}],
+                ['F', numFs, colorF],
+                ['D', numDs, colorD],
+                ['C', numCs, colorC],
+                ['B', numBs, colorB],
+                ['A', numAs, colorA],
+            ]);
+            
+            // Set chart options
+            var options = {
+                'title': 'Class Assignment Scores',
+                'width': 900,
+                'height': 480,
+                'legend': 'bottom'
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+
+
+    </script>
+}
+@if (TempData["MissingFile"] != null)
+{
+    message = (string)TempData["MissingFile"];
+}
+
+<h1 style="color:dodgerblue">@Html.DisplayFor(model => model.Title)</h1>
+<hr />
+
+<div>
+    <span>
+        @Html.DisplayNameFor(model => model.DueDate):&nbsp; @Html.DisplayFor(model => model.DueDate)  &emsp; &emsp;
+        @Html.DisplayNameFor(model => model.MaxPoints):&nbsp; @score/@Html.DisplayFor(model => model.MaxPoints)
+        <a style="margin-left:500px" asp-action="Index" asp-route-id="@classid">Back to List</a>
+
+    </span>
+    <hr />
+    <span style="margin-bottom:100px">
+        @Html.DisplayFor(model => model.Description)
+    </span>
+</div>
+@if (((await UserManager.GetUserAsync(User)).UserType == "S"))
+{
+    @if (Model.SubmissionType == "Text Entry")
+    {
+        <form asp-controller="Submission" asp-action="Create">
+
+            <div style="margin-top:20px">
+
+                <div class="form-group" hidden>
+                    <input class="form-control" value="@Model.Id" name="AssignmentId" />
+                    <input class="form-control" value="@userid" name="UserId" />
+                    <input class="form-control" value="@time" name="SubmissionDate" />
+                </div>
+
+                @if (String.IsNullOrWhiteSpace(priorText))
+                {
+                    <div class="form-group">
+                        <textarea style="width:100%; height:300px" placeholder="Enter text here" name="text"></textarea>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <textarea style="width:100%; height:300px" placeholder="@priorText" name="text"></textarea>
+                    </div>
+                }
+                @if (dueDate < time)
+                {
+                    <div class="form-group">
+                        <input type="submit" value="Submit" class="btn btn-success" style="margin-left:90%" asp-controller="Submissions" asp-action="Create" disabled />
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <input type="submit" value="Submit" class="btn btn-success" style="margin-left:90%" asp-controller="Submissions" asp-action="Create" />
+                    </div>
+                }
+            </div>
+        </form>
+    }
+
+    @if (Model.SubmissionType == "File Upload")
+    {
+        TempData["FileUpload"] = 1;
+        <form method="post" enctype="multipart/form-data" asp-controller="Submission" asp-action="Create">
+
+            <div style="margin-top:20px">
+
+                <div class="form-group" hidden>
+                    <input class="form-control" value="@Model.Id" name="AssignmentId" />
+                    <input class="form-control" value="@userid" name="UserId" />
+                    <input class="form-control" value="@time" name="SubmissionDate" />
+                </div>
+
+                <div class="form-group">
+                    <input type="file" name="postedFiles" multiple />
+                    @if (dueDate < time)
+                    {
+                        <input type="submit" value="Submit" class="btn btn-success" style="margin-left:90%" asp-controller="Submissions" asp-action="Create" disabled />
+                    }
+                    else
+                    {
+                        <input type="submit" value="Submit" class="btn btn-success" style="margin-left:90%" asp-controller="Submissions" asp-action="Create" />
+                    }
+                    <div class="form-group">
+                        <label class="control-label"><i>Click <b>'Choose Files'</b> button if you want to override previously submitted file(s):<b> @priorFiles</b></i></label>
+                    </div>
+                    <br />
+                    <strong>@Html.Raw(message)</strong>
+                </div>
+            </div>
+        </form>
+    }
+}
+
+<!--Draw the assignment histogram here if user is a student.-->
+@if (((await UserManager.GetUserAsync(User)).UserType == "S"))
+{   <center>
+        <h5 class="justify-content-center">Your score bracket is highlighted in green.</h5>
+        <div id="chart_div"></div>
+    </center>
+}

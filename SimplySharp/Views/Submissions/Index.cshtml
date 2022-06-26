@@ -1,0 +1,171 @@
+﻿@model IEnumerable<SimplySharp.Models.UserAssignmentViewModel>
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+
+
+@inject UserManager<SimplySharpUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Index";
+    var name = TempData["studentName"];
+    int[] scoreList = (int[])TempData["ScoreList"];
+    int scoreCount = (int)TempData["ScoreCount"];
+    int maxScore = (int)TempData["MaxPoints"];
+
+
+}
+
+
+
+<h1 class="text-primary">Submissions</h1>
+@if ((string)TempData["Referrer"] == "SaveGrade")
+{
+    <div class="alert alert-success">
+        <strong>Grade Submitted</strong>
+    </div>
+}
+
+<p>
+
+</p>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                Student
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.SubmissionDate)
+
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+
+            <tr>
+
+                <td>
+                    @item.FirstName  @item.LastName
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubmissionDate)
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" asp-route-assignmentid="@item.AssignmentId" class="btn btn-primary">Grade</a>
+                    @if (item.Score.HasValue)
+                    {
+                        <span>&#10003;</span>
+                    }
+
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!--Div that will hold the charts-->
+
+<div id="raw_histo_div" ></div>
+<div id="letter_chart_div"></div>
+
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    //SOURCE: https://developers.google.com/chart/interactive/docs/quick_start
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', { 'packages': ['corechart'] });
+    var count = @scoreCount;
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+
+    // Callback that creates and populates a data table,
+    // instantiates the pie chart, passes in the data and
+    // draws it.
+    function drawChart() {
+        let max = @maxScore;
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('number', 'Scores');
+        // Set chart options
+        var options = {
+            'title': 'Student Scores For This Assignment',
+            'width': 720,
+            'height': 300,
+            'histogram': { maxValue: max }
+        }
+
+        var jsScoreList = new Array();
+            @foreach (var num in scoreList)
+            {
+                @:jsScoreList.push(@num);
+            }
+
+            for (let i = 0; i < count; i++) {
+
+                data.addRow([jsScoreList[i]]);
+
+            }
+
+        var data2 = new google.visualization.DataTable();
+
+        data2.addColumn('string', 'Letter Grade');
+        data2.addColumn('number', 'Number of Students');
+        var options2 = {
+            'title': 'Letter Grades',
+            'width': 720,
+            'height': 300,
+        }
+
+
+
+        let numAs = 0;
+        let numBs = 0;
+        let numCs = 0;
+        let numDs = 0;
+        let numFs = 0;
+        let letterGrade = 0;
+        for (let i = 0; i < count; i++) {
+            let letterGrade = jsScoreList[i] / max * 100;
+            if (letterGrade < 60) {
+                numFs++;
+            } else if (letterGrade >= 60 && letterGrade < 70) {
+                numDs++;
+            } else if (letterGrade >= 70 && letterGrade < 80) {
+                numCs++;
+            } else if (letterGrade >= 80 && letterGrade < 90) {
+                numBs++;
+            } else if (letterGrade >= 90) {
+                numAs++;
+            }
+
+        }
+
+
+        data2.addRows([
+            ['F', numFs],
+            ['D', numDs],
+            ['C', numCs],
+            ['B', numBs],
+            ['A', numAs]]);
+         //Instantiate and draw our chart, passing in some options.
+
+        var rawHisto = new google.visualization.Histogram(document.getElementById('raw_histo_div'));
+        var letterChart = new google.visualization.ColumnChart(document.getElementById('letter_chart_div'));
+        letterChart.draw(data2, options2);
+        rawHisto.draw(data, options);
+    }
+</script>
+
+
+

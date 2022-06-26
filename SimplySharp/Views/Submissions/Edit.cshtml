@@ -1,0 +1,98 @@
+﻿@model SimplySharp.Models.Submission
+
+@{
+    ViewData["Title"] = "Edit";
+    var Title = TempData["assignTitle"];
+    var Desc = TempData["assignDesc"];
+    var Points = TempData["assignPoints"];
+    var FileSubmission = TempData["fileSubmission"];
+    var submittedFiles = TempData["submittedFiles"];
+}
+
+<h4>@Title</h4>
+
+
+<hr />
+
+<div class="row">
+    <div style="width:90%; margin-left:20px">
+        @Desc <br /><br /><br />
+        <form asp-action="Edit">
+            <div class="col-8" style="float:left">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group" hidden>
+                    <label asp-for="AssignmentId" class="control-label"></label>
+                    <input asp-for="AssignmentId" class="form-control" />
+                    <span asp-validation-for="AssignmentId" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="UserId" class="control-label"></label>
+                    <input asp-for="UserId" class="form-control" />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+                @if ((bool)FileSubmission)
+                {
+                    <table>
+                        <tr>
+                            <th>Submitted File(s)</th>
+                            <th></th>
+                        </tr>
+                        @foreach (KeyValuePair<string, string> item in (Dictionary<string, string>)submittedFiles)
+                        {
+                            <tr>
+                                <td>@item.Key</td>
+                                <td>@Html.ActionLink("Download", "DownloadFile", new { filePath = item.Value })</td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="form-group" hidden>
+                        <textarea asp-for="Text" class="form-control" rows="10" readonly></textarea>
+                        <span asp-validation-for="Text" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <textarea asp-for="Text" class="form-control" rows="10" readonly></textarea>
+                        <span asp-validation-for="Text" class="text-danger"></span>
+                    </div>
+                }
+                @* We need to keep File data for the database *@
+                <div class="form-group" hidden>
+                    <label asp-for="File" class="control-label"></label>
+                    <input asp-for="File" class="form-control" />
+                    <span asp-validation-for="File" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="SubmissionDate" class="control-label"></label>
+                    <input asp-for="SubmissionDate" class="form-control" />
+                    <span asp-validation-for="SubmissionDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-4" style="float:right">
+                <div class="form-group">
+                    <label asp-for="Score" class="control-label">Score   /@Points</label>
+                    <input asp-for="Score" class="form-control" min="0" max="@Points" />
+                    <span asp-validation-for="Score" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="InstructorFeedback" class="control-label"></label>
+                    <textarea asp-for="InstructorFeedback" class="form-control" cols="8" rows="4"></textarea>
+                    <span asp-validation-for="InstructorFeedback" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary" style="margin-left:75%" />
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

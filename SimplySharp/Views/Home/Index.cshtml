@@ -1,0 +1,182 @@
+﻿@model StudentAssignmentViewModel
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+@using SimplySharp.Models;
+@using SimplySharp.Controllers;
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+@{
+    var loggedUser = (await UserManager.GetUserAsync(User));
+}
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@*<div class="text-center">
+    <h1 class="display-4">Welcome @loggedUser.FirstName @loggedUser.LastName </h1>
+    <hr />
+</div>*@
+
+<div class="row"style="width:100%">
+    <div class="col-auto">
+
+        <style>
+            .Cards {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+        </style>
+
+        <div class="container">
+            <h2 class="text-center">Classes</h2>
+            @{List<Class> list = HomeController.list;
+                <div class="Cards">
+                    @if (Model.Classes != null)
+                    {
+                    foreach (var item in Model.Classes)   //iterate through the class list and present each class through the UI
+                    {
+                        <div class="card" style="margin:10px">
+                            <div class="card text-left">
+                                <div class="card-header">
+                                    <h5 class="card-title">@item.ClassId</h5>
+                                    <h6 class="card-subtitle">@item.ClassName</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">@item.Location</p>
+                                    <p class="card-text">@item.MeetingDays @Html.DisplayFor(modelItem => item.StartTime) - @Html.DisplayFor(modelItem => item.EndTime)</p>
+                                </div>
+                                <a asp-controller="Assignments" asp-route-id="@item.Id" class="stretched-link"></a>
+                            </div>
+                        </div>
+                    }
+                    }
+                    <br />
+                </div>
+                <br />
+            }
+
+        </div>
+    </div>
+    <br />
+    <!--assignment list-->
+    <div style="float:right; margin-left:auto; border-left:2px solid gray; padding-left:30px">
+@*        <style>
+            .toDo {
+                border: 1px solid #000;
+                padding: 20px;
+               
+            }
+        </style>*@
+
+        <h2 class="text-center toDoTitle">ToDo List</h2>
+
+        <!--style for the assignment list-->
+
+
+        @if (UserManager.GetUserAsync(User).Result.UserType != "T" && (Model.Classes != null || Model.Assignment != null) )  //to do list, switched to cards for the link to work
+        {
+            int count = 0;
+
+            foreach (var assignment in Model.Assignment)
+            {
+                <div class="card toDo" style="margin:5px">
+                    <div class="card text-left">
+                        <div class="card-header">
+                            <h5 class="card-title">@assignment.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var classroom in Model.Classes)
+                            {
+                                if (classroom.Id == assignment.ClassId)
+                                {
+                                    <p class="card-text">@classroom.ClassName</p>
+                                    break;
+                                }
+                            }
+                            <p class="card-text">@assignment.DueDate</p>
+                            <p class="card-text">Points: @assignment.MaxPoints</p>
+                        </div>
+                        <a asp-controller="Assignments" asp-action="Details" asp-route-id="@assignment.Id" class="stretched-link"></a>
+                    </div>
+                </div>
+
+                count++;
+                if (count == 5)
+                {
+                    break;
+                }
+
+
+            }
+        }
+        else if (UserManager.GetUserAsync(User).Result.UserType == "T" && (Model.Classes != null || Model.Assignment != null))
+        {
+            int count = 0;
+            bool flag = false;
+            List<int> assignmentId = new List<int>();
+            foreach (var submission in Model.Submission)
+            {
+
+
+                @foreach (var assignment in Model.Assignment)
+                {
+                    if (submission.AssignmentId == assignment.Id)
+                    {
+                        if (assignmentId.Contains(submission.AssignmentId))
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            
+
+                            assignmentId.Add(submission.AssignmentId);
+                            count++;
+                            int classroomID = 1;
+
+                            <div class="card toDo">
+                                <div class="card text-left">
+                                    <div class="card-header">
+                                        <h5 class="card-title">@assignment.Title</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach (var classroom in Model.Classes)
+                                        {
+                                            if (assignment.ClassId == classroom.Id)
+                                            {
+                                                <p class="card-text">@classroom.ClassName</p>
+                                                 classroomID = classroom.Id;
+                                            }
+                                        }
+                                        <p class="card-text">@assignment.DueDate</p>
+
+                                        
+                                        <p class="card-text">Points: @assignment.MaxPoints</p>
+                                    </div>
+                                    <a asp-controller="Assignments" asp-route-id="@classroomID" class="stretched-link"></a>
+                                </div>
+                            </div>
+
+
+                            if (count == 5)
+                            {
+                                flag = true;
+                            }
+
+                        }
+                    }
+
+                }
+
+                if (flag == true)
+                {
+                    break;
+                }
+
+            }
+        }
+
+
+    </div>
+</div>

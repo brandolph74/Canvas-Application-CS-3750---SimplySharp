@@ -1,0 +1,190 @@
+﻿@model SimplySharp.Models.Class
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+@{
+    var instructor = (await UserManager.GetUserAsync(User)).FirstName + ' ' + (await UserManager.GetUserAsync(User)).LastName;
+
+}
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Class</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Department" class="control-label"></label>
+                <select asp-for="Department" class="form-control">
+                    <option>Accounting</option>
+                    <option>Computer Science</option>
+                    <option>Chemistry</option>
+                    <option>Math</option>
+                    <option>Physics</option>
+                </select>
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClassId" class="control-label"></label>
+                <input asp-for="ClassId" class="form-control" />
+                <span asp-validation-for="ClassId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClassName" class="control-label"></label>
+                <input asp-for="ClassName" class="form-control" />
+                <span asp-validation-for="ClassName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Credits" class="control-label"></label>
+                <input asp-for="Credits" class="form-control" />
+                <span asp-validation-for="Credits" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Location" class="control-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+
+            @Html.HiddenFor(model => model.MeetingDays, new { id = "MD" })
+            Meeting Days:<br />
+            @{
+                if (Model.MeetingDays.Split(" ").Contains<string>("M"))
+                {
+                    <input id="1" type="checkbox" value="M" checked="checked" onchange="getSelected()" />
+                    @:Monday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="M" onchange="getSelected()" />
+                    @:Monday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("T"))
+                {
+                    <input id="1" type="checkbox" value="T" checked="checked" onchange="getSelected()" />
+                    @:Tuesday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="T" onchange="getSelected()" />
+                    @:Tuesday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("W"))
+                {
+                    <input id="1" type="checkbox" value="W" checked="checked" onchange="getSelected()" />
+                    @:Wednesday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="W" onchange="getSelected()" />
+                    @:Wednesday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("TH"))
+                {
+                    <input id="1" type="checkbox" value="TH" checked="checked" onchange="getSelected()" />
+                    @:Thursday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="TH" onchange="getSelected()" />
+                    @:Thursday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("F"))
+                {
+                    <input id="1" type="checkbox" value="F" checked="checked" onchange="getSelected()" />
+                    @:Friday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="F" onchange="getSelected()" />
+                    @:Friday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("S"))
+                {
+                    <input id="1" type="checkbox" value="S" checked="checked" onchange="getSelected()" />
+                    @:Saturday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="S" onchange="getSelected()" />
+                    @:Saturday
+                    @:<br />
+                }
+                if (Model.MeetingDays.Split(" ").Contains<string>("SU"))
+                {
+                    <input id="1" type="checkbox" value="SU" checked="checked" onchange="getSelected()" />
+                    @:Sunday
+                    @:<br />
+                }
+                else
+                {
+                    <input id="1" type="checkbox" value="SU" onchange="getSelected()" />
+                    @:Sunday
+                    @:<br />
+                }
+            }
+
+            <script>
+                function getSelected() {
+                    var sList = "";
+                    $('input[type=checkbox]').each(function () {
+                        if (this.checked) { sList += this.value + " "; }
+                    });
+                    $("#MD").val(sList.trim());
+                }
+            </script>
+            <br/>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" class="form-control" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <div>
+                    <label asp-for="Instructor" class="control-label"></label>
+                    <input asp-for="Instructor" class="form-control" value=@instructor />
+                    <span asp-validation-for="Instructor" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

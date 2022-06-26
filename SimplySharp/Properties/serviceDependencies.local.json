@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql.local",
+      "connectionId": "SimplySharpDBContextConnection"
+    },
+    "mssql3": {
+      "type": "mssql.local",
+      "connectionId": "ClassContext"
+    },
+    "mssql4": {
+      "type": "mssql.local",
+      "connectionId": "AssignmentContext"
+    },
+    "mssql5": {
+      "type": "mssql.local",
+      "connectionId": "SubmissionContext"
+    }
+  }
+}

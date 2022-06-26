@@ -1,0 +1,110 @@
+﻿@model Payment
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="container-fluid">
+    <br />
+    <div class="row">
+        <h1  style="color:dodgerblue">Tuition Payment</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <br /><br />
+            <div class="row">
+                <h3 class="text-secondary">Current Balance: </h3>
+                <h3>&nbsp; &nbsp; &nbsp;$@ViewBag.TotalCost</h3>
+            </div>
+
+            <br />
+            <h3 class="text-secondary">Credit Card Information</h3>
+            <form asp-action="Submit" id="ccForm">
+                <div class="form-group">
+                    <label>Name On Card</label>
+                    <input class="form-control" style="width:300px" required />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input class="form-control" name="ccNumber" placeholder="---- ---- ---- ----" style="width:200px" required />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="row ml-sm-1">
+                    <label>Expiry Month / Year:</label>
+                    <label style="margin-left:35px">CVC:</label>
+                </div>
+                <div class="row ml-sm-1">
+                    <div class="form-group">
+                        <select style="height:36px" name="expMonth">
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                            <option>05</option>
+                            <option>06</option>
+                            <option>07</option>
+                            <option>08</option>
+                            <option>09</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                        </select>
+                        <span class="text-danger"></span>
+                    </div>
+                    <label style="font-size:25px">&nbsp;/&nbsp;</label>
+                    <div class="form-group">
+                        <select style="height:36px" name="expYear">
+                            <option>2021</option>
+                            <option>2022</option>
+                            <option>2023</option>
+                            <option>2024</option>
+                            <option>2025</option>
+                            <option>2026</option>
+                            <option>2027</option>
+                            <option>2028</option>
+                            <option>2029</option>
+                            <option>2030</option>
+                            <option>2031</option>
+                        </select>
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" name="cvcNumber" style="width:55px; margin-left:50px" required />
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="row" style="margin-left:4px;">
+                    <h5 class="text-secondary" style="margin-top:5px">Payment Amount: $</h5>
+                    <div class="form-group">
+                        <input class="form-control" name="amount" placeholder="0.00" style="margin-left:10px; width:110px" required />
+                        <span class="text-danger"></span>
+                    </div>
+                    <input type="submit" form="ccForm" class="btn btn-success" value="Submit Payment" style="height:40px; margin-left:20px" />
+                </div>
+                <br />
+                <div class="row" style="margin-left:4px;">
+                    <h5 class="text-secondary" style="margin-top:5px">Payment Description</h5>
+                    <div class="form-group">
+                        <input class="form-control" name="description" style="margin-left:10px; width: 300px" />
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+            </form>
+            <div class="row" style="margin-left:4px;">
+                <h3>
+                    <i class="fab fa-cc-stripe" style="margin:3px;"></i>
+                    <i class="fab fa-cc-paypal" style="margin:3px;"></i>
+                    <i class="fab fa-cc-visa" style="margin:3px;"></i>
+                    <i class="fab fa-cc-mastercard" style="margin:3px;"></i>
+                    <i class="fab fa-cc-discover" style="margin:3px;"></i>
+                </h3>
+            </div>
+
+        </div> @*End column 1*@
+    </div>@*End Row 1*@
+</div>
+@Html.Raw(TempData["Msg"])
+

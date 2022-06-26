@@ -1,0 +1,140 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<div class="row">
+    <div class="col-md-12">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <button id="update-profile-button" type="submit" class="btn btn-primary btn-block" hidden>Save</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="edit-profile-button" type="button" class="btn btn-primary btn-block">Edit</button>
+                    </div>
+                    <script>
+                        $("#edit-profile-button").on('click', function () {
+                            @SimplySharp.Controllers.HomeController.reload = true;
+                            $('#FirstName, #LastName, #AddressLine1, #AddressLine2, #City, #State, #Zip, #PhoneNumber, #Biography').prop('readonly', false);
+                            $("#update-profile-button, #update-profile-button1, #updatePic, #Link1, #Link2, #Link3").prop('hidden', false);
+                            $(this).hide();
+                        });
+                    </script>
+                    <div class="form-group">
+                        <div>
+                            <label asp-for="Input.ProfilePicture" style="width: 100%;"></label>
+                            @if (Model.Input.ProfilePicture != null)
+                            {
+                                <img id="profilePicture" style="display:block; margin-left: auto; margin-right: auto; width:80%; border-radius:80%; max-height:300px; object-fit:contain; " src="data:image/*;base64,@(Convert.ToBase64String(Model.Input.ProfilePicture))">
+                            }
+                            else
+                            {
+                                @*Display a default profile picture if none exists*@
+                                <img id="profilePicture" style="width: 65%; max-height: 400px; object-fit: contain; border-radius: 30px" src="~/StaticImages/default_profile_image.png">
+                            }
+                            <input id="updatePic" hidden type="file"
+                                   accept=".png,.jpg,.jpeg,.gif,.tif"
+                                   asp-for="Input.ProfilePicture"
+                                   class="form-control"
+                                   style="border:0px!important;padding: 0px;padding-top: 10px;padding-bottom: 30px; color: rgba(0, 0, 0, 0); "
+                                   onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+                            <span asp-validation-for="Input.ProfilePicture" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Username"></label>
+                        <input asp-for="Username" class="form-control" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.FirstName"></label>
+                        <input id="FirstName" asp-for="Input.FirstName" class="form-control" readonly />
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.LastName"></label>
+                        <input id="LastName" asp-for="Input.LastName" class="form-control" readonly />
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Birthdate"></label>
+                        <input id="Birthdate" asp-for="Input.Birthdate" class="form-control" readonly />
+                        <span asp-validation-for="Input.Birthdate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.AddressLine1"></label>
+                        <input id="AddressLine1" asp-for="Input.AddressLine1" class="form-control" readonly />
+                        <span asp-validation-for="Input.AddressLine1" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.AddressLine2"></label>
+                        <input id="AddressLine2" asp-for="Input.AddressLine2" class="form-control" readonly />
+                        <span asp-validation-for="Input.AddressLine2" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.City"></label>
+                        <input id="City" asp-for="Input.City" class="form-control" readonly />
+                        <span asp-validation-for="Input.City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.State"></label>
+                        <input id="State" asp-for="Input.State" class="form-control" readonly />
+                        <span asp-validation-for="Input.State" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Zip"></label>
+                        <input id="Zip" asp-for="Input.Zip" class="form-control" readonly />
+                        <span asp-validation-for="Input.Zip" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.PhoneNumber"></label>
+                        <input id="PhoneNumber" asp-for="Input.PhoneNumber" class="form-control" readonly />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Input.Biography"></label>
+                        <textarea id="Biography" asp-for="Input.Biography" class="form-control" rows="10" readonly></textarea>
+                        <span asp-validation-for="Input.Biography" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Link1"></label>
+                        <input id="Link1" asp-for="Input.Link1" class="form-control" placeholder="facebook.com" hidden />
+                        <a target="_blank" href="javascript:;" onclick="href='http://'+document.getElementById('Link1').value">@(Model.Input.Link1)</a>
+                        <span asp-validation-for="Input.Link1" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Link2"></label>
+                        <input id="Link2" asp-for="Input.Link2" class="form-control" placeholder="linkedin.com" hidden />
+                        <a target="_blank" href="javascript:;" onclick="href='http://'+document.getElementById('Link2').value">@(Model.Input.Link2)</a>
+                        <span asp-validation-for="Input.Link2" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Link3"></label>
+                        <input id="Link3" asp-for="Input.Link3" class="form-control" placeholder="google.com" hidden />
+                        <a target="_blank" href="javascript:;" onclick="href='http://'+document.getElementById('Link3').value">@(Model.Input.Link3)</a>
+                        <span asp-validation-for="Input.Link3" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button id="update-profile-button1" type="submit" class="btn btn-primary btn-block" hidden>Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-5 offset-md-3">
+        <div class="card-header">
+            <a class="navbar-brand" href="/Identity/Account/Login">Welcome to SimplySharp</a>
+        </div>
+        <div class="card-content">
+            <div class="row">
+                <div class="col-md-12">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @await RenderSectionAsync("Scripts", required: false)
+
+}
+

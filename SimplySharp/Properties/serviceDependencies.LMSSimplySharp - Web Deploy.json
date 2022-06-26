@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/lmssimplysharpdbserver/databases/SimplySharp_db",
+      "type": "mssql.azure",
+      "connectionId": "SimplySharpDBContextConnection",
+      "secretStore": "AzureAppSettings"
+    },
+    "mssql3": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/lmssimplysharpdbserver/databases/SimplySharp_db",
+      "type": "mssql.azure",
+      "connectionId": "ClassContext",
+      "secretStore": "AzureAppSettings"
+    },
+    "mssql4": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/lmssimplysharpdbserver/databases/SimplySharp_db",
+      "type": "mssql.azure",
+      "connectionId": "AssignmentContext",
+      "secretStore": "AzureAppSettings"
+    },
+    "mssql5": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/lmssimplysharpdbserver/databases/SimplySharp_db",
+      "type": "mssql.azure",
+      "connectionId": "SubmissionContext",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

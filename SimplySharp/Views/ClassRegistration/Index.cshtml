@@ -1,0 +1,103 @@
+﻿@model IEnumerable<SimplySharp.Models.Class>
+@using Microsoft.AspNetCore.Identity
+@using SimplySharp.Areas.Identity.Data
+@using SimplySharp.Controllers;
+
+@inject SignInManager<SimplySharpUser> SignInManager
+@inject UserManager<SimplySharpUser> UserManager
+@{
+    var loggedUser = (await UserManager.GetUserAsync(User));
+}
+@{
+    ViewData["Title"] = "Register for a Class";
+}
+@{
+    var data = ViewBag.Message;
+}
+@{
+    bool registered = false;
+}
+
+<h1  style="color:dodgerblue">
+    Class Registration
+</h1>
+
+
+<form asp-controller="ClassRegistration" asp-action="Index" method="get">   
+    <p>
+        Class ID or Name:
+        <input type="text" name="searchString" />
+        <br />
+        Department:
+        <label class="control-label"></label>
+        <select class="form-control" name="Dept">
+            <option></option>
+            <option>Accounting</option>
+            <option>Computer Science</option>
+            <option>Chemistry</option>
+            <option>Math</option>
+            <option>Physics</option>
+        </select>
+
+        <input type="submit" class="btn btn-primary text-white" value="Search" />
+    </p>
+</form>
+
+
+<span class="text-danger"></span>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClassId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClassName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Credits)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>Meeting Times</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ClassId</td>
+                <td>@item.ClassName</td>
+                <td>@item.Instructor</td>
+                <td>@item.Credits</td>
+                <td>@item.Location</td>
+                <td>@item.MeetingDays @Html.DisplayFor(modelItem => item.StartTime) - @Html.DisplayFor(modelItem => item.EndTime)</td>
+                @{
+                    registered = false;
+                }
+                @foreach (var dataItem in data)
+                {
+                    @if (dataItem.ClassId == item.Id)
+                    {
+                        registered = true;
+                        break;
+                    }
+                }
+                @if (!@registered)
+                {
+                    <td><a asp-action="Create" asp-controller="ClassRegistration" asp-route-classId="@item.Id" asp-route-studentId="@loggedUser.Id" class="btn btn-primary">Register</a></td>
+                }
+                else
+                {
+                    <td><a asp-action="Delete" asp-controller="ClassRegistration" asp-route-classId="@item.Id" asp-route-studentId="@loggedUser.Id" class="btn btn-primary">Drop</a></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
